@@ -5,114 +5,60 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import React, { useEffect, useRef, useState } from 'react';
+import { Platform, StyleSheet, SafeAreaView, BackHandler } from "react-native";
+import WebView from 'react-native-webview';
+import { Components } from './src/components';
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+    const appUrl = 'https://casa.leadsynchro.com/mobile';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+    const webViewRef = useRef<WebView|null>(null);
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+    const [errorDescription, setErrorDescription] = useState<string|null>(null);
+
+    useEffect(() => {
+        if (Platform.OS === 'ios') return;
+
+        const handleBackPress = () => {
+            if (!webViewRef.current) return false;
+
+            webViewRef.current.goBack();
+            return true;
+        };
+
+        const handleEvent = BackHandler.addEventListener(
+            'hardwareBackPress',
+            handleBackPress
+        );
+
+        return () => handleEvent.remove();
+    }, [])
+
+    return (
+        <SafeAreaView style={styles.wrapper}>
+            <WebView source={{uri: appUrl}} ref={webViewRef}
+            javaScriptEnabled={true} 
+            domStorageEnabled={true}
+            allowsBackForwardNavigationGestures={true}
+            startInLoadingState={true}
+            showsVerticalScrollIndicator={false}
+            mixedContentMode="compatibility"
+            onError={({nativeEvent}) => setErrorDescription(nativeEvent.description)}
+            renderLoading={() => <Components.Loader />}
+            renderError={() => <Components.ErrorMessage description={errorDescription} />}
+            />
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+    wrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%'
+    }
 });
 
 export default App;
