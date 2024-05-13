@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, SafeAreaView, BackHandler } from "react-native";
+import { Platform, StyleSheet, SafeAreaView, BackHandler } from 'react-native';
 import WebView from 'react-native-webview';
 import { Components } from './src/components';
 
@@ -33,12 +33,12 @@ function App(): React.JSX.Element {
         );
 
         return () => handleEvent.remove();
-    }, [])
+    }, []);
 
     return (
         <SafeAreaView style={styles.wrapper}>
             <WebView source={{uri: appUrl}} ref={webViewRef}
-            javaScriptEnabled={true} 
+            javaScriptEnabled={true}
             domStorageEnabled={true}
             allowsBackForwardNavigationGestures={true}
             startInLoadingState={true}
@@ -57,8 +57,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         width: '100%',
-        height: '100%'
-    }
+        height: '100%',
+    },
 });
 
 export default App;

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: CONSTANTS.COLORS.BG_PRIMARY
+        backgroundColor: CONSTANTS.COLORS.BG_WHITE
 
     },
     image: {
