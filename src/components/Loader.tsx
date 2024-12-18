@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
 
     },
     image: {
-        width: 130,
-        height: 130
+        width: 80,
+        height: 40
     },
     loaderText: {
         fontSize: CONSTANTS.SIZES.TEXT_MD,
